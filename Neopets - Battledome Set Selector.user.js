@@ -2,7 +2,7 @@
 // @name         Neopets - Battledome Set Selector (BD+) <MettyNeo>
 // @description  Adds a toolbar to define and select up to 5 different loadouts. can default 1 loadout to start as selected. Also adds other QoL battledome features, such as disabling battle animations and auto-selecting 1P opponent.
 // @author       Metamagic (modified by gurase)
-// @version      2026-11-10
+// @version      2026-11-10.1
 // @icon         https://i.imgur.com/RnuqLRm.png
 // @match        https://www.neopets.com/dome/*
 // @match        https://www.neopets.com/tvw/
@@ -54,7 +54,7 @@ const gray = [99,99,99]
 const colormap = [red,blue,green,magenta,yellow]
 
 const nullset = {set:null, name:null, default:null}
-const nullautofill = {turnfill:[null,null,null,null], default:null}
+const nullautofill = {turnfill:[null,null,null,null,null], default:null}
 
 const ROW_COLORS = {
     1:"#a9bad4",
@@ -97,6 +97,12 @@ else {
         if(!GM_getValue("bdautofill").turnfill) updateDataCompat()
     }
     else GM_setValue("bdautofill", clone(nullautofill)) // otherwise set new default
+    //pad turnfill to current length (for added turn slots, e.g. turn 5)
+    let bdafData = GM_getValue("bdautofill")
+    if(bdafData && bdafData.turnfill && bdafData.turnfill.length < nullautofill.turnfill.length) {
+        while(bdafData.turnfill.length < nullautofill.turnfill.length) bdafData.turnfill.push(null)
+        GM_setValue("bdautofill", bdafData)
+    }
     //runs on page load
     window.addEventListener("DOMContentLoaded", function() {
         //arena page (battle)
