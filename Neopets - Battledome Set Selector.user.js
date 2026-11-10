@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name         Neopets - Battledome Set Selector (BD+) <MettyNeo>
 // @description  Adds a toolbar to define and select up to 5 different loadouts. can default 1 loadout to start as selected. Also adds other QoL battledome features, such as disabling battle animations and auto-selecting 1P opponent.
-// @author       Metamagic
-// @version      2026-09-30
+// @author       Metamagic (modified by gurase)
+// @version      2026-11/10
 // @icon         https://i.imgur.com/RnuqLRm.png
 // @match        https://www.neopets.com/dome/*
 // @match        https://www.neopets.com/tvw/
 // @grant GM_setValue
 // @grant GM_getValue
 // @grant GM_deleteValue
-// @downloadURL  https://github.com/Mettymagic/np-userscripts/raw/main/Neopets%20-%20Battledome%20Set%20Selector.user.js
-// @updateURL    https://github.com/Mettymagic/np-userscripts/raw/main/Neopets%20-%20Battledome%20Set%20Selector.user.js
+// @downloadURL  https://github.com/gurase/np-userscripts/raw/main/Neopets%20-%20Battledome%20Set%20Selector.user.js
+// @updateURL    https://github.com/gurase/np-userscripts/raw/main/Neopets%20-%20Battledome%20Set%20Selector.user.js
 // @run-at       document-start
 // ==/UserScript==
 
@@ -26,7 +26,7 @@ const ANIMATION_DELAY = 0 //delay (in ms) before skipping animations. 0 = no ani
 const HIDE_USELESS_BUTTONS = true //hides the useless chat/animation buttons
 const IMPROVE_CHALLENGER_LIST = true //enables the 1P challenger list improvements, such as the favorites list and auto-selection.
 const LOOT_DISPLAY = true //displays earned loot in the form of pretty progress bars
-const INDEX_REDIRECT = true //redirects off the main index page to the fight page
+const INDEX_REDIRECT = false //redirects off the main index page to the fight page
 const LOOSE_OBELISK_RESTRICTIONS = true //allows the script to be used in obelisk battles if you haven't done your 10 battles or if you haven't earned your 15 items. honor means nothing compared to convenience.
 const ALLOW_SWAP_AUTOFILL = true; // allows swapping autofill turns of sets by removing other claimant(s)
 
@@ -83,7 +83,7 @@ if(window.location.href.includes("/tvw/")) {
 else {
     let MAX_PP = GM_getValue("maxplotpoints", 3000)
     //index page - redirects
-    if(window.location.href.includes("/dome/index.phtml") || window.location.href == "https://www.neopets.com/dome/" || window.location.href.includes("/dome/?")) {
+    if(INDEX_REDIRECT && (window.location.href.includes("/dome/index.phtml") || window.location.href == "https://www.neopets.com/dome/" || window.location.href.includes("/dome/?"))) {
         window.location.replace("https://www.neopets.com/dome/fight.phtml")
     }
 
