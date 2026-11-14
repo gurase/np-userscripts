@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Neopets - Battledome Set Selector (BD+) <MettyNeo>
-// @description  Adds a toolbar to define and select up to 5 different loadouts. can default 1 loadout to start as selected. Also adds other QoL battledome features, such as disabling battle animations and auto-selecting 1P opponent.
+// @description  Adds a toolbar to define and select up to 6 different loadouts. can default 1 loadout to start as selected. Also adds other QoL battledome features, such as disabling battle animations and auto-selecting 1P opponent.
 // @author       Metamagic (modified by gurase)
-// @version      2026-11-10.1
+// @version      2026-11-13
 // @icon         https://i.imgur.com/RnuqLRm.png
 // @match        https://www.neopets.com/dome/*
 // @match        https://www.neopets.com/tvw/
@@ -50,11 +50,12 @@ const blue = [107,168,237]
 const green = [123,199,88]
 const yellow = [249,204,14]
 const magenta = [179,89,212]
+const orange = [231,138,61]
 const gray = [99,99,99]
-const colormap = [red,blue,green,magenta,yellow]
+const colormap = [red,blue,green,magenta,yellow,orange]
 
 const nullset = {set:null, name:null, default:null}
-const nullautofill = {turnfill:[null,null,null,null,null], default:null}
+const nullautofill = {turnfill:[null,null,null,null,null,null], default:null}
 
 const ROW_COLORS = {
     1:"#a9bad4",
@@ -97,11 +98,17 @@ else {
         if(!GM_getValue("bdautofill").turnfill) updateDataCompat()
     }
     else GM_setValue("bdautofill", clone(nullautofill)) // otherwise set new default
-    //pad turnfill to current length (for added turn slots, e.g. turn 5)
+    //pad turnfill to current length (for added turn slots, e.g. turn 6)
     let bdafData = GM_getValue("bdautofill")
     if(bdafData && bdafData.turnfill && bdafData.turnfill.length < nullautofill.turnfill.length) {
         while(bdafData.turnfill.length < nullautofill.turnfill.length) bdafData.turnfill.push(null)
         GM_setValue("bdautofill", bdafData)
+    }
+    //pad bdsets to current length (for added loadout slots, e.g. loadout 6)
+    let bdsetsData = GM_getValue("bdsets")
+    if(bdsetsData && Array.isArray(bdsetsData) && bdsetsData.length < colormap.length) {
+        while(bdsetsData.length < colormap.length) bdsetsData.push(clone(nullset))
+        GM_setValue("bdsets", bdsetsData)
     }
     //runs on page load
     window.addEventListener("DOMContentLoaded", function() {
@@ -272,7 +279,7 @@ else {
         let bdsetdata = getData("bdsets")
         //in cases where setdata gets set to undefined/null by accident
         if(!bdsetdata) {
-            setData("bdsets", clone([nullset,nullset,nullset,nullset,nullset]))
+            setData("bdsets", clone([nullset,nullset,nullset,nullset,nullset,nullset]))
             setData("bdautofill", nullautofill)
             bdsetdata = getData("bdsets")
             window.alert("BSS data corrupted, clearing sets.\nSorry for any inconvenience.")
@@ -1111,7 +1118,7 @@ else {
     //keeps support from cookies
     function getData(tag, i = null) {
         if(tag == "bdsets") {
-            let ns = clone([nullset,nullset,nullset,nullset,nullset])
+            let ns = clone([nullset,nullset,nullset,nullset,nullset,nullset])
 
             //still supports browser cookies to prevent set wipes
             let cookie = window.localStorage.getItem("bdsets")
@@ -1119,9 +1126,10 @@ else {
                 if(i != null) return JSON.parse(JSON.parse(cookie)[i])
                 else {
                     let arr = JSON.parse(cookie)
-                    for(i = 0; i < 5; i++) {
+                    for(i = 0; i < arr.length; i++) {
                         arr[i] = JSON.parse(arr[i])
                     }
+                    while(arr.length < colormap.length) arr.push(clone(nullset))
                     return arr
                 }
             }
@@ -1561,7 +1569,7 @@ else {
         .bdsetcontainer {
             height: 60px;
             padding: 5px;
-            width: 18%;
+            width: 15%;
             display: flex;
             justify-content: center;
             align-items: center;
